@@ -1,0 +1,14 @@
+# Build outputs and local environment
+.gradle/
+build/
+**/build/
+**/node_modules/
+.idea/
+.vscode/
+.DS_Store
+.env
+.env.*
+*.local
+*.pem
+*.key
+workplace/

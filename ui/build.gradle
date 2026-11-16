@@ -1,0 +1,11 @@
+plugins {
+    id 'base'
+}
+
+tasks.register('buildFrontend', Exec) {
+    commandLine providers.environmentVariable('XIAORAN_NPM').getOrElse('npm'), 'run', 'build'
+    inputs.dir('src')
+    inputs.files('package.json', 'package-lock.json', 'vite.config.ts')
+    outputs.dir(layout.buildDirectory.dir('dist'))
+}
+tasks.named('assemble') { dependsOn tasks.named('buildFrontend') }

@@ -1,0 +1,58 @@
+apiVersion: v1alpha1
+kind: Role
+metadata:
+  name: xiaoran-space-miniapp-gateway
+  labels:
+    halo.run/role-template: "true"
+    halo.run/hidden: "true"
+    rbac.authorization.halo.run/aggregate-to-anonymous: "true"
+rules:
+  - apiGroups: ["api.space.onoe.cn"]
+    resources: ["sessions", "bindings", "moments", "images"]
+    verbs: ["create"]
+  - apiGroups: ["api.space.onoe.cn"]
+    resources: ["sessions"]
+    resourceNames: ["current"]
+    verbs: ["delete"]
+  - apiGroups: ["api.space.onoe.cn"]
+    resources: ["records"]
+    verbs: ["list", "create"]
+  - apiGroups: ["api.space.onoe.cn"]
+    resources: ["daily", "personal"]
+    verbs: ["get", "update"]
+  - apiGroups: ["api.space.onoe.cn"]
+    resources: ["fonts"]
+    verbs: ["get"]
+  - apiGroups: ["api.space.onoe.cn"]
+    resources: ["frame"]
+    verbs: ["get"]
+  - apiGroups: ["api.space.onoe.cn"]
+    resources: ["frameverifications"]
+    verbs: ["create"]
+  - apiGroups: ["api.space.onoe.cn"]
+    resources: ["moments"]
+    verbs: ["delete"]
+  - apiGroups: ["api.space.onoe.cn"]
+    resources: ["momentpermissions"]
+    verbs: ["list"]
+  - apiGroups: ["api.space.onoe.cn"]
+    resources: ["mcp"]
+    verbs: ["list", "create"]
+  - apiGroups: ["api.space.onoe.cn"]
+    resources: ["mcpstatus"]
+    verbs: ["list"]
+  - apiGroups: ["api.space.onoe.cn"]
+    resources: ["mcpbindings", "mcpenrollments"]
+    verbs: ["create"]
+  - apiGroups: ["api.space.onoe.cn"]
+    resources: ["mcpsessions"]
+    resourceNames: ["current"]
+    verbs: ["delete"]
+  - apiGroups: ["api.space.onoe.cn"]
+    resources: ["mcpimages"]
+    verbs: ["create"]
+
+  - apiGroups: ["api.space.onoe.cn"]
+    resources: ["bindings"]
+    resourceNames: ["current"]
+    verbs: ["delete"]

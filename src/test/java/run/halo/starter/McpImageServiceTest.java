@@ -1,0 +1,17 @@
+package run.halo.starter;
+import java.net.URI;
+import java.util.*;
+import org.junit.jupiter.api.Test;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import reactor.core.publisher.*;
+import run.halo.app.core.extension.attachment.Attachment;
+import run.halo.app.core.extension.service.AttachmentService;
+import run.halo.app.extension.*;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+class McpImageServiceTest {
+ private byte[] png(){return new byte[]{(byte)137,80,78,71,13,10,26,10,0,0,0,0};}
+ @Test void uploadUsesThisBlogsPolicyOwnerAndAgentTagAndDeduplicates(){var cfg=mock(McpConfigService.class);when(cfg.requireWriter("agent-a")).thenReturn(Mono.empty());var wc=mock(McpWriteConfig.class);var settings=new McpWriteSettings();settings.setAuthorName("blog-owner");settings.setPolicyName("their-own-policy");when(wc.ready()).thenReturn(Mono.just(settings));var attachments=mock(AttachmentService.class);var client=mock(ReactiveExtensionClient.class);var image=new Attachment();var meta=new Metadata();meta.setName("own-image");image.setMetadata(meta);when(attachments.upload(eq("blog-owner"),eq("their-own-policy"),isNull(),any(org.springframework.http.codec.multipart.FilePart.class),any(java.util.function.Consumer.class))).thenAnswer(i->ReactiveSecurityContextHolder.getContext().map(context->{assertEquals("blog-owner",context.getAuthentication().getName());((java.util.function.Consumer<Attachment>)i.getArgument(4)).accept(image);return image;}));when(client.update(any(Attachment.class))).thenAnswer(i->Mono.just(i.getArgument(0)));when(attachments.getPermalink(any())).thenReturn(Mono.just(URI.create("https://their-storage.example/image.png")));var service=new McpImageService(cfg,wc,attachments,client,new SubmissionGuard());var result=service.upload("agent-a",png(),"upload-request-123456").block();assertEquals("own-image",result.get("attachmentId"));assertEquals("agent-a",image.getMetadata().getAnnotations().get(McpImageService.AGENT));service.upload("agent-a",png(),"upload-request-123456").block();verify(attachments,times(1)).upload(eq("blog-owner"),eq("their-own-policy"),isNull(),any(org.springframework.http.codec.multipart.FilePart.class),any(java.util.function.Consumer.class));var changed=png();changed[11]=1;assertThrows(Exception.class,()->service.upload("agent-a",changed,"upload-request-123456").block());}
+ @Test void imagesOfAnotherAgentCannotBeIncluded(){var client=mock(ReactiveExtensionClient.class);var image=new Attachment();var m=new Metadata();m.setName("other-image");m.setAnnotations(Map.of(McpImageService.AGENT,"agent-b"));image.setMetadata(m);when(client.fetch(Attachment.class,"other-image")).thenReturn(Mono.just(image));var attachments=mock(AttachmentService.class);var service=new McpImageService(mock(McpConfigService.class),mock(McpWriteConfig.class),attachments,client,new SubmissionGuard());assertThrows(Exception.class,()->service.images("agent-a",List.of("other-image")).block());verifyNoInteractions(attachments);}
+ @Test void rejectsPrivateIpCredentialsAndNonHttpsSources(){for(String url:List.of("http://example.com/a.png","https://127.0.0.1/a.png","https://[::1]/a.png","https://u:p@example.com/a.png","https://localhost/a.png","file:///etc/passwd"))assertThrows(IllegalArgumentException.class,()->McpImageService.source(url));assertEquals("https",McpImageService.source("https://public.example/a.png?signature=abc").getScheme());}
+}

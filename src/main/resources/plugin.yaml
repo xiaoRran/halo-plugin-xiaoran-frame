@@ -1,0 +1,24 @@
+# Refer https://docs.halo.run/developer-guide/plugin/basics/manifest
+
+apiVersion: plugin.halo.run/v1alpha1
+kind: Plugin
+metadata:
+  # The name defines how the plugin is invoked, A unique name
+  name: xiaoran-space
+  annotations:
+    store.halo.run/app-id: app-aykmqbkw
+spec:
+  enabled: true
+  requires: ">=2.27.2"
+  author:
+    name: 小染
+    website: https://onoe.cn
+  logo: frame-logo.png
+  homepage: https://github.com/xiaoRran/halo-plugin-xiaoran-frame#readme
+  repo: https://github.com/xiaoRran/halo-plugin-xiaoran-frame
+  issues: https://github.com/xiaoRran/halo-plugin-xiaoran-frame/issues
+  displayName: "小染 Frame"
+  description: "连接小染 Frame 微信小程序，展示本站公开内容并管理个人生活空间"
+  license:
+    - name: "GPL-3.0"
+      url: "https://www.gnu.org/licenses/gpl-3.0.html"
