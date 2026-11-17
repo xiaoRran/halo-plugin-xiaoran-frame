@@ -33,7 +33,7 @@ public class McpEndpoint implements CustomEndpoint {
         String version=r.headers().firstHeader("MCP-Protocol-Version");if(!method.equals("initialize")&&!PROTOCOL.equals(version))return ServerResponse.badRequest().bodyValue(Map.of("error","不支持的 MCP 协议版本"));
         if(id==null)return method.startsWith("notifications/")?ServerResponse.accepted().build():error(null,-32600,"请求缺少编号");
         return switch(method){
-            case "initialize" -> result(id,Map.of("protocolVersion",PROTOCOL,"capabilities",Map.of("tools",Map.of("listChanged",false)),"serverInfo",Map.of("name","xiaoran-frame-halo","version","0.4.8"),"instructions","工具按连接权限提供。默认只读；写入需一次授权；在Agent对话中展示图文并获得用户明确确认后，调用publish_moment直接发布。只有返回PUBLISHED才能报告已公开。不提供删除或私密读取工具。"));
+            case "initialize" -> result(id,Map.of("protocolVersion",PROTOCOL,"capabilities",Map.of("tools",Map.of("listChanged",false)),"serverInfo",Map.of("name","xiaoran-frame-halo","version","0.5.9"),"instructions","工具按连接权限提供。默认只读；写入需一次授权；在Agent对话中展示图文并获得用户明确确认后，调用publish_moment直接发布。只有返回PUBLISHED才能报告已公开。不提供删除或私密读取工具。"));
             case "ping" -> result(id,Map.of());
             case "tools/list" -> catalog(r).flatMap(list->result(id,Map.of("tools",list)));
             case "tools/call" -> {
