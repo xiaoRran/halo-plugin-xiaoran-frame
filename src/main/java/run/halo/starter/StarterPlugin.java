@@ -9,6 +9,8 @@ import run.halo.app.plugin.PluginContext;
 @Component
 public class StarterPlugin extends BasePlugin {
     private final SchemeManager schemes;
+    @org.springframework.beans.factory.annotation.Autowired
+    private OfficialAccountSync officialAccount;
 
     public StarterPlugin(PluginContext context, SchemeManager schemes) {
         super(context);
@@ -25,10 +27,16 @@ public class StarterPlugin extends BasePlugin {
         schemes.register(McpSettings.class);
         schemes.register(McpWriteSettings.class);
         schemes.register(McpMomentDraft.class);
+        schemes.register(OfficialAccountSettings.class);
+        schemes.register(OfficialAccountJob.class);
+        if (officialAccount != null) officialAccount.start();
     }
 
     @Override
     public void stop() {
+        if (officialAccount != null) officialAccount.stop();
+        schemes.unregister(Scheme.buildFromType(OfficialAccountJob.class));
+        schemes.unregister(Scheme.buildFromType(OfficialAccountSettings.class));
         schemes.unregister(Scheme.buildFromType(LifeRecord.class));
         schemes.unregister(Scheme.buildFromType(OwnerBinding.class));
         schemes.unregister(Scheme.buildFromType(DailyState.class));

@@ -18,7 +18,7 @@ spec:
   repo: https://github.com/xiaoRran/halo-plugin-xiaoran-frame
   issues: https://github.com/xiaoRran/halo-plugin-xiaoran-frame/issues
   displayName: "小染 Frame"
-  description: "连接小染 Frame 微信小程序，展示本站公开内容并管理个人生活空间"
+  description: "连接微信小程序、MCP Agent与公众号，管理博客内容和日常记录"
   license:
     - name: "GPL-3.0"
       url: "https://www.gnu.org/licenses/gpl-3.0.html"
